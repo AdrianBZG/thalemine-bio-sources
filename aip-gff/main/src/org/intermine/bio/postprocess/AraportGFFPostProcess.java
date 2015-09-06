@@ -116,15 +116,10 @@ public class AraportGFFPostProcess extends PostProcessor {
 			log.info("Query Is NOT Null");
 		}
 
-		/*
-		 * if (os == null) { os = osw.getObjectStore(); }
-		 */
-
 		ObjectStore os1 = osw.getObjectStore();
 
 		((ObjectStoreInterMineImpl) os1).precompute(query, Constants.PRECOMPUTE_CATEGORY);
 		Results res = os1.execute(query, 5000, true, false, true);
-
 
 		if (res != null) {
 			log.info("Gene Source Result Set Size:" + res.size());
@@ -183,7 +178,7 @@ public class AraportGFFPostProcess extends PostProcessor {
 
 		int count = 0;
 		int pubAddedCount = 0;
-		
+
 		osw.beginTransaction();
 
 		while (iterator.hasNext()) {
@@ -203,7 +198,7 @@ public class AraportGFFPostProcess extends PostProcessor {
 			log.info("Iterator 4 Line");
 
 			log.info("Processing Current Gene: = " + gene.getPrimaryIdentifier());
-			
+
 			count++;
 
 			log.info("Iterator 5 Line");
@@ -234,9 +229,6 @@ public class AraportGFFPostProcess extends PostProcessor {
 
 			if (notExistingTranscriptsPublications.size() > 0 && !notExistingTranscriptsPublications.isEmpty()) {
 				log.info("Adding not existing pub to a gene publication collection.");
-				// existingGenePublications.addAll(notExistingTranscriptsPublications);
-				// log.info("Current Gene Expected of # Existing Publication Count After the Merge: = "
-				// + existingGenePublications.size());
 
 				// Attempt to store Gene Publication Collection
 
@@ -273,10 +265,10 @@ public class AraportGFFPostProcess extends PostProcessor {
 			log.info("Processed Gene Count:" + count);
 		}
 		osw.commitTransaction();
-		
+
 		log.info("Total Processed Gene Count:" + count);
 		log.info("Total Publications Added Processed:" + pubAddedCount);
-		
+
 	}
 
 	private Query getNotExistingTranscriptsPubbyGeneQuery(InterMineObject object) {
@@ -428,16 +420,16 @@ public class AraportGFFPostProcess extends PostProcessor {
 		if (classDesc != null) {
 			classDescAsStr = classDesc.getName();
 
-			//log.info("Class Descriptor:" + classDescAsStr);
+			// log.info("Class Descriptor:" + classDescAsStr);
 
 			Set<CollectionDescriptor> collectionDescGene = classDesc.getAllCollectionDescriptors();
 
 			// Adding Class Collection Descriptors to the Map
-			//log.info("Adding Class Collection Descriptors to the Map:");
+			// log.info("Adding Class Collection Descriptors to the Map:");
 
 			for (CollectionDescriptor item : collectionDescGene) {
 
-			//	log.info("Collection Decscriptor Name: " + item.toString());
+				// log.info("Collection Decscriptor Name: " + item.toString());
 
 				boolean manyToManyC = false;
 
@@ -447,7 +439,7 @@ public class AraportGFFPostProcess extends PostProcessor {
 
 				collectionDescMap.put(item.getName(), item);
 
-				//log.info("Collection Type Many To Many ?: " + manyToManyC);
+				// log.info("Collection Type Many To Many ?: " + manyToManyC);
 			}
 
 			if (!collectionDescMap.isEmpty() && collectionDescMap.size() > 0) {
@@ -470,8 +462,6 @@ public class AraportGFFPostProcess extends PostProcessor {
 		String errorMessage = null;
 
 		try {
-
-			//osw.beginTransaction();
 
 			CollectionDescriptor collectionDesc = getCollectionDescriptor(destClassName, collectionName);
 			ClassDescriptor classDesc = osw.getModel().getClassDescriptorByName(destClassName);
@@ -502,7 +492,7 @@ public class AraportGFFPostProcess extends PostProcessor {
 				log.info("Adding Pub to Gene/Pub Collection before");
 				osw.addToCollection(destObject.getId(), classDesc.getType(), collectionName, sourceObject.getId());
 				log.info("Adding Pub to Gene/Pub Collection after");
-			} else {
+			} else { // publications will be always many to many
 
 				// InterMineObject tempObject =
 				// PostProcessUtil.cloneInterMineObject(destObject);
@@ -511,8 +501,6 @@ public class AraportGFFPostProcess extends PostProcessor {
 
 			}
 
-			//osw.commitTransaction();
-
 		} catch (Exception e) {
 			exception = e;
 		} finally {
@@ -520,7 +508,8 @@ public class AraportGFFPostProcess extends PostProcessor {
 			if (exception != null) {
 				exception.printStackTrace();
 				log.error("Error occurred during persistence of collection for object: " + destObject.toString()
-						+ "; Collection Name: " + collectionName + ";Message:" + exception.getMessage() + "; Cause:" + exception.getCause());
+						+ "; Collection Name: " + collectionName + ";Message:" + exception.getMessage() + "; Cause:"
+						+ exception.getCause());
 				throw exception;
 			} else {
 				log.info("Element of Collection " + collectionName + " successfully stored in the database."
