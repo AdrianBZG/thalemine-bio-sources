@@ -1,5 +1,5 @@
 <project name="bar-lookups" default="default" basedir=".">
   <description>build, test, package bar-lookups</description>
   
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
 </project>
